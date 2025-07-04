@@ -81,6 +81,15 @@ public class ProlongementService {
 
             throw new Exception("Pénalité ajoutée pour retard.");
         }
+
+        Optional<LocalDate> maxPenalite = penaliteRepository.findMaxDateDebutByAdherentId(adherent.getId());
+        if (maxPenalite.isPresent()) {
+            LocalDate finPenalite = maxPenalite.get().plusDays(adherent.getTypeAdherent().getDureePenalite());
+            if (!finPenalite.isBefore(dateProlongement)) {
+                throw new Exception("Période de pénalité en cours.");
+            }
+        }
+
         prolongement.setPret(pret);
         prolongementRepository.save(prolongement);
 
