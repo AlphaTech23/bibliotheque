@@ -34,6 +34,9 @@ public class TypeAdherent {
     @Column(name = "quota_reservation", nullable = false)
     private Integer quotaReservation;
 
+    @Column(name = "post_prolongement", nullable = false)
+    private Integer postProlongement;
+
     // Getters et Setters
     public Integer getId() {
         return id;
@@ -89,5 +92,13 @@ public class TypeAdherent {
 
     public void setQuotaReservation(Integer quotaReservation) {
         this.quotaReservation = quotaReservation;
+    }
+
+    public Integer getPostProlongement() {
+        return postProlongement;
+    }
+
+    public void setPostProlongement(Integer postProlongement) {
+        this.postProlongement = postProlongement;
     }
 }

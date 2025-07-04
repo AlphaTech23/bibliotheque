@@ -19,6 +19,7 @@ CREATE TABLE type_adherent (
     duree_prolongement INT NOT NULL,
     duree_penalite INT NOT NULL,
     quota_reservation INT NOT NULL,
+    post_prolongement INT NOT NULL
 ) ENGINE=InnoDB;
 
 -- Table adherent
@@ -105,7 +106,7 @@ CREATE TABLE reservation (
     adherent_id INT NOT NULL,
     exemplaire_id INT NOT NULL,
     date_reservation DATE NOT NULL,
-    valide DATE,
+    valide BOOLEAN,
     FOREIGN KEY (adherent_id) REFERENCES adherent(id) ON DELETE RESTRICT,
     FOREIGN KEY (exemplaire_id) REFERENCES exemplaire(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;

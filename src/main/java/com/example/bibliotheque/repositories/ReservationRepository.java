@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
     boolean existsByExemplaireIdAndDateReservation(Integer exemplaireId, LocalDate dateReservation);
-    long countByAdherentId(Integer adherentId);
+    long countByAdherentIdAndValideIsNull(Integer adherentId);
+    long countByAdherentIdAndValide(Integer adherentId, Boolean valid);
 }

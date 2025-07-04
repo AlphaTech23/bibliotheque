@@ -33,7 +33,7 @@ public class Reservation {
     private LocalDate dateReservation;
 
     @Column(name = "valide")
-    private LocalDate valide;
+    private boolean valide;
 
     // Getters et Setters
 
@@ -45,11 +45,11 @@ public class Reservation {
         this.id = id;
     }
 
-    public LocalDate getValide() {
+    public boolean getValide() {
         return valide;
     }
 
-    public void setValide(LocalDate valide) {
+    public void setValide(boolean valide) {
         this.valide = valide;
     }
 
