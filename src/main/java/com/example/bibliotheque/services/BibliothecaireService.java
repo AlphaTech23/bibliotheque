@@ -1,10 +1,10 @@
-package com.example.bibliotheque.service;
+package com.example.bibliotheque.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.bibliotheque.model.Bibliothecaire;
-import com.example.bibliotheque.repository.BibliothecaireRepository;
+import com.example.bibliotheque.models.Bibliothecaire;
+import com.example.bibliotheque.repositories.BibliothecaireRepository;
 
 @Service
 public class BibliothecaireService {

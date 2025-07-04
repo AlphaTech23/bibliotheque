@@ -1,9 +1,9 @@
-package com.example.bibliotheque.repository;
+package com.example.bibliotheque.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.bibliotheque.model.Bibliothecaire;
+import com.example.bibliotheque.models.Bibliothecaire;
 
 @Repository
 public interface BibliothecaireRepository extends JpaRepository<Bibliothecaire, Integer> {

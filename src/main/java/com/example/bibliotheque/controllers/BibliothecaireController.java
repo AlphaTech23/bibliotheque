@@ -1,4 +1,4 @@
-package com.example.bibliotheque.controller;
+package com.example.bibliotheque.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.bibliotheque.model.Bibliothecaire;
-import com.example.bibliotheque.service.BibliothecaireService;
+import com.example.bibliotheque.models.Bibliothecaire;
+import com.example.bibliotheque.services.BibliothecaireService;
 
 import jakarta.servlet.http.HttpSession;
 
