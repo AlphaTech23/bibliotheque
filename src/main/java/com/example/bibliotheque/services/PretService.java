@@ -51,15 +51,15 @@ public class PretService {
         Optional<TypePret> otp = typePretRepo.findById(typePretId);
 
         if (oa.isEmpty()) {
-            throw new Exception("Adherent inexistant.");
+            throw new Exception("Adherent introuvable.");
         }
 
         if(oe.isEmpty()) {
-            throw new Exception("Exemplaire inexistant.");
+            throw new Exception("Exemplaire introuvable.");
         }
 
         if(otp.isEmpty()) {
-            throw new Exception("Type pret inexistant");
+            throw new Exception("Type pret introuvable");
         }
 
         Adherent adherent = oa.get();
@@ -109,8 +109,8 @@ public class PretService {
         pret.setDatePret(today);
         pret.setTypePret(typePret);
 
-        if (!typePret.getLibelle().equalsIgnoreCase("sur place")) {
-            pret.setDateRetour(today.plusDays(adherent.getTypeAdherent().getDureePret()));
+        if (typePret.getLibelle().equalsIgnoreCase("sur place")) {
+            pret.setDateRetour(today);
         }
 
         pretRepo.save(pret);

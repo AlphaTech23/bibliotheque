@@ -2,33 +2,49 @@
 <html>
 <head>
     <title>Effectuer un prêt</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<h2>Effectuer un prêt</h2>
+<body class="container mt-5">
 
-<c:if test="${not empty error}">
-    <div style="color: red;">
-        ${error}
-    </div>
-</c:if>
+    <h2 class="mb-4">Effectuer un prêt</h2>
 
-<c:if test="${not empty success}">
-    <div style="color: green;">
-        ${success}
-    </div>
-</c:if>
+    <!-- Message d'erreur -->
+    <% if(request.getAttribute("error") != null) { %>
+        <div class="alert alert-danger">
+            <%= request.getAttribute("error") %>
+        </div>
+    <% } %>
 
-<form method="post" action="${pageContext.request.contextPath}/prets/effectuer">
-    <label for="adherentId">Adhérent :</label><br/>
-    <input type="number" name="adherentId" required/><br/><br/>
+    <!-- Message de succès -->
+    <% if(request.getAttribute("success") != null) { %>
+        <div class="alert alert-success">
+            <%= request.getAttribute("success") %>
+        </div>
+    <% } %>
 
-    <label for="exemplaireId">Exemplaire :</label><br/>
-    <input type="number" name="exemplaireId" required/><br/><br/>
+    <form method="post" action="<%= request.getContextPath() %>/prets/effectuer" class="border p-4 rounded bg-light shadow-sm">
 
-    <label for="typePretId">Type de prêt :</label><br/>
-    <input type="number" name="typePretId" required/><br/><br/>
+        <div class="mb-3">
+            <label for="adherentId" class="form-label">Adhérent :</label>
+            <input type="number" name="adherentId" id="adherentId" class="form-control" required/>
+        </div>
 
-    <input type="submit" value="Effectuer le prêt"/>
-</form>
+        <div class="mb-3">
+            <label for="exemplaireId" class="form-label">Exemplaire :</label>
+            <input type="number" name="exemplaireId" id="exemplaireId" class="form-control" required/>
+        </div>
+
+        <div class="mb-3">
+            <label for="typePretId" class="form-label">Type de prêt :</label>
+            <input type="number" name="typePretId" id="typePretId" class="form-control" required/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Effectuer le prêt</button>
+    </form>
+
+    <!-- Bootstrap JS (facultatif, pour composants interactifs) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
