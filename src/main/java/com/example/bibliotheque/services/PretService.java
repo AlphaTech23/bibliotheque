@@ -66,6 +66,10 @@ public class PretService {
         Exemplaire exemplaire = oe.get();
         TypePret typePret = otp.get();
 
+        if(adherent.getAge() < exemplaire.getLivre().getRestriction()) {
+            throw new Exception("La restriction d'age pour ce livre est " + exemplaire.getLivre().getRestriction());
+        }
+
         if (!adherentService.isActif(adherentId, today)) {
             throw new Exception("Abonnement expiré.");
         }
