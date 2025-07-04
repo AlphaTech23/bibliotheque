@@ -1,5 +1,7 @@
 package com.example.bibliotheque.controllers;
 
+import java.time.LocalDate;
+
 import com.example.bibliotheque.models.*;
 import com.example.bibliotheque.services.PretService;
 
@@ -23,10 +25,11 @@ public class PretController {
     public String effectuerPret(@RequestParam Integer adherentId,
                                 @RequestParam Integer exemplaireId,
                                 @RequestParam Integer typePretId,
+                                @RequestParam LocalDate datePret,
                                 Model model) {
 
         try {
-            model.addAttribute("success", pretService.effectuerPret(adherentId, exemplaireId, typePretId));
+            model.addAttribute("success", pretService.effectuerPret(adherentId, exemplaireId, typePretId, datePret));
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
@@ -41,4 +44,32 @@ public class PretController {
         }
         return "pret";
     }
+
+    @GetMapping("/retour")
+    public String formRetour(HttpSession session, Model model) {
+        Adherent adherent = (Adherent) session.getAttribute("adherent");
+        if (adherent == null) {
+            return "redirect:/login";
+        }
+        return "pret-retour";
+    }
+
+    @PostMapping("/retour")
+    public String rendreExemplaire(
+            @RequestParam("exemplaireId") Integer exemplaireId,
+            @RequestParam("dateRetour") LocalDate dateRetour,
+            Model model) {
+
+        try {
+            model.addAttribute("success", pretService.rendreExemplaire(exemplaireId, dateRetour));
+        } catch(IllegalArgumentException iae) {
+            model.addAttribute("warning", iae.getMessage());
+        }
+        catch(Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "pret-retour";
+    }
+
 }

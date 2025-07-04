@@ -114,6 +114,7 @@ CREATE TABLE penalite (
     id INT AUTO_INCREMENT PRIMARY KEY,
     adherent_id INT NOT NULL,
     date_debut DATE,
+    motif VARCHAR(100),
     FOREIGN KEY (adherent_id) REFERENCES adherent(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

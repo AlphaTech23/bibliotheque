@@ -8,19 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.bibliotheque.models.Adherent;
-import com.example.bibliotheque.models.Exemplaire;
-import com.example.bibliotheque.models.Pret;
-import com.example.bibliotheque.models.StatutExemplaire;
-import com.example.bibliotheque.models.TypePret;
-import com.example.bibliotheque.repositories.AbonnementRepository;
-import com.example.bibliotheque.repositories.AdherentRepository;
-import com.example.bibliotheque.repositories.ExemplaireRepository;
-import com.example.bibliotheque.repositories.PenaliteRepository;
-import com.example.bibliotheque.repositories.PretRepository;
-import com.example.bibliotheque.repositories.ReservationRepository;
-import com.example.bibliotheque.repositories.StatutExemplaireRepository;
-import com.example.bibliotheque.repositories.TypePretRepository;
+import com.example.bibliotheque.models.*;
+import com.example.bibliotheque.repositories.*;
 
 @Service
 public class PretService {
@@ -42,9 +31,7 @@ public class PretService {
     private TypePretRepository typePretRepo;
 
     @Transactional
-    public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId) throws Exception {
-
-        LocalDate today = LocalDate.now();
+    public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId, LocalDate datePret) throws Exception {
 
         Optional<Adherent> oa = adherentRepo.findById(adherentId);
         Optional<Exemplaire> oe = exRepo.findById(exemplaireId);
@@ -70,7 +57,7 @@ public class PretService {
             throw new Exception("La restriction d'age pour ce livre est " + exemplaire.getLivre().getRestriction());
         }
 
-        if (!adherentService.isActif(adherentId, today)) {
+        if (!adherentService.isActif(adherentId, datePret)) {
             throw new Exception("Abonnement expiré.");
         }
 
@@ -85,13 +72,13 @@ public class PretService {
             Optional<LocalDate> maxPenalite = penRepo.findMaxDateDebutByAdherentId(adherentId);
             if (maxPenalite.isPresent()) {
                 LocalDate finPenalite = maxPenalite.get().plusDays(adherent.getTypeAdherent().getDureePenalite());
-                if (!finPenalite.isBefore(today)) {
+                if (!finPenalite.isBefore(datePret)) {
                     throw new Exception("Période de pénalité en cours.");
                 }
             }
         }
 
-        if (pretRepo.existsPretActifSurExemplairePourDate(exemplaireId, today)) {
+        if (pretRepo.existsPretActifSurExemplairePourDate(exemplaireId, datePret)) {
             throw new Exception("Exemplaire déjà prêté.");
         }
 
@@ -103,22 +90,65 @@ public class PretService {
             }
         }
 
-        if (resRepo.existsByExemplaireIdAndDateReservation(exemplaireId, today)) {
+        if (resRepo.existsByExemplaireIdAndDateReservation(exemplaireId, datePret)) {
             throw new Exception("Exemplaire réservé.");
         }
 
         Pret pret = new Pret();
         pret.setAdherent(adherent);
         pret.setExemplaire(exemplaire);
-        pret.setDatePret(today);
+        pret.setDatePret(datePret);
         pret.setTypePret(typePret);
 
         if (typePret.getLibelle().equalsIgnoreCase("sur place")) {
-            pret.setDateRetour(today);
+            pret.setDateRetour(datePret);
         }
 
         pretRepo.save(pret);
 
         return "Prêt effectué avec succès.";
     }
+
+    @Transactional
+    public String rendreExemplaire(Integer exemplaireId, LocalDate dateRetour) throws Exception {
+        Optional<Pret> optPret = pretRepo.findByExemplaireIdAndDateRetourIsNull(exemplaireId);
+        if (optPret.isEmpty()) {
+            throw new Exception("Aucun prêt actif pour cet exemplaire.");
+        }
+
+        Pret pret = optPret.get();
+        Adherent adherent = pret.getAdherent();
+        TypeAdherent typeAdherent = adherent.getTypeAdherent();
+
+        LocalDate dateLimite = pret.getDatePret().plusDays(typeAdherent.getDureePret());
+
+        if (dateRetour.isAfter(dateLimite)) {
+            Penalite penalite = new Penalite();
+            penalite.setAdherent(adherent);
+
+            Optional<Penalite> lastPenalite = penRepo.findTopByAdherentIdOrderByDateDebutDesc(adherent.getId());
+
+            LocalDate dateDebutPenalite;
+            if (lastPenalite.isPresent()) {
+                LocalDate finPenalite = lastPenalite.get().getDateDebut().plusDays(typeAdherent.getDureePenalite());
+                dateDebutPenalite = dateRetour.isAfter(finPenalite) ? dateRetour : finPenalite;
+            } else {
+                dateDebutPenalite = dateRetour;
+            }
+
+            penalite.setDateDebut(dateDebutPenalite);
+            penalite.setMotif("Retour en retard le " + dateRetour);
+            penRepo.save(penalite);
+            pret.setDateRetour(dateRetour);
+            pretRepo.save(pret);
+
+            throw new IllegalArgumentException("Pénalité ajoutée pour retard.");
+        }
+
+        pret.setDateRetour(dateRetour);
+        pretRepo.save(pret);
+
+        return "Retour enregistré avec succès.";
+    }
+
 }

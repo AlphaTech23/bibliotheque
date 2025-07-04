@@ -38,7 +38,7 @@ public class AdherentController {
         return adherentService.login(email, motDePasse)
                 .map(adherent -> {
                     session.setAttribute("adherent", adherent); // Stocker en session
-                    return "redirect:/dashboard";
+                    return "redirect:/prets/retour";
                 })
                 .orElseGet(() -> {
                     model.addAttribute("error", "Email ou mot de passe incorrect");
@@ -50,7 +50,7 @@ public class AdherentController {
     @GetMapping("/inscription")
     public String showRegisterForm(Model model) {
         model.addAttribute("adherent", new Adherent());
-        model.addAttribute("types", typeAdherentService.findAll()); // Pour la liste déroulante
+        model.addAttribute("types", typeAdherentService.findAll());
         return "inscription";
     }
 
@@ -59,8 +59,8 @@ public class AdherentController {
     public String register(@ModelAttribute Adherent adherent,
                            HttpSession session) {
         Adherent saved = adherentService.inscrire(adherent);
-        session.setAttribute("adherent", saved); // Connexion automatique
-        return "redirect:/dashboard";
+        session.setAttribute("adherent", saved);
+        return "redirect:/prets/retour";
     }
 
 

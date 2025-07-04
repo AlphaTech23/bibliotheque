@@ -14,4 +14,5 @@ import com.example.bibliotheque.models.Penalite;
 public interface PenaliteRepository extends JpaRepository<Penalite, Integer> {
     @Query("SELECT MAX(p.dateDebut) FROM Penalite p WHERE p.adherent.id = :adId")
     Optional<LocalDate> findMaxDateDebutByAdherentId(@Param("adId") Integer adherentId);
+    Optional<Penalite> findTopByAdherentIdOrderByDateDebutDesc(Integer adherentId);
 }

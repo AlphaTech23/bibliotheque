@@ -31,6 +31,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="adherentId" class="form-label">Date de pret :</label>
+            <input type="date" name="datePret" id="DatePret" class="form-control" required/>
+        </div>
+
+        <div class="mb-3">
             <label for="exemplaireId" class="form-label">Exemplaire :</label>
             <input type="number" name="exemplaireId" id="exemplaireId" class="form-control" required/>
         </div>

@@ -19,6 +19,9 @@ public class Penalite {
     @Column(name = "date_debut")
     private LocalDate dateDebut;
 
+    @Column(name = "motif")
+    private String motif;
+
     // Getters et Setters
 
     public Integer getId() {
@@ -27,6 +30,14 @@ public class Penalite {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getMotif() {
+        return motif;
+    }
+
+    public void setMotif(String motif) {
+        this.motif = motif;
     }
 
     public Adherent getAdherent() {
