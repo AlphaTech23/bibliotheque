@@ -34,6 +34,9 @@
                     <div class="mt-3 text-center">
                         <a href="${pageContext.request.contextPath}/inscription">Créer un compte</a>
                     </div>
+                    <div class="mt-3 text-right">
+                        <a href="${pageContext.request.contextPath}/bibliothecaire/login">Se connecter en tant que bibliothecaire</a>
+                    </div>
                 </div>
             </div>
         </div>

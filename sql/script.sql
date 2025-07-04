@@ -18,7 +18,7 @@ CREATE TABLE type_adherent (
     duree_pret INT NOT NULL,
     duree_prolongement INT NOT NULL,
     duree_penalite INT NOT NULL,
-    quota_reservation INT NOT NULL
+    quota_reservation INT NOT NULL,
 ) ENGINE=InnoDB;
 
 -- Table adherent
@@ -105,6 +105,7 @@ CREATE TABLE reservation (
     adherent_id INT NOT NULL,
     exemplaire_id INT NOT NULL,
     date_reservation DATE NOT NULL,
+    valide DATE,
     FOREIGN KEY (adherent_id) REFERENCES adherent(id) ON DELETE RESTRICT,
     FOREIGN KEY (exemplaire_id) REFERENCES exemplaire(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
@@ -112,8 +113,10 @@ CREATE TABLE reservation (
 -- Table penalite
 CREATE TABLE penalite (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    pret_id INT NOT NULL,
-    FOREIGN KEY (pret_id) REFERENCES pret(id) ON DELETE CASCADE
+    adherent_id INT NOT NULL,
+    date_debut DATE,
+    motif VARCHAR(100),
+    FOREIGN KEY (adherent_id) REFERENCES adherent(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table jour_ferier

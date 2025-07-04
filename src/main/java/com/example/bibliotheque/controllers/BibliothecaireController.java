@@ -21,7 +21,7 @@ public class BibliothecaireController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login";
+        return "login-biblio";
     }
 
     @PostMapping("/login")
@@ -32,10 +32,10 @@ public class BibliothecaireController {
         Bibliothecaire bibliothecaire = bibliothecaireService.authentifier(nom, motDePasse);
         if (bibliothecaire != null) {
             session.setAttribute("bibliothecaire", bibliothecaire);
-            return "dashboard";
+            return "redirect:/prets";
         } else {
             model.addAttribute("error", "Nom ou mot de passe incorrect");
-            return "login";
+            return "login-biblio";
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.bibliotheque.models;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,6 +66,10 @@ public class Adherent {
 
     public String getMotDePasse() {
         return motDePasse;
+    }
+
+    public Integer getAge(LocalDate date) {
+        return Period.between(this.dateNaissance, date).getYears();
     }
 
     public void setMotDePasse(String motDePasse) {
