@@ -37,9 +37,8 @@ public class PretController {
     public String dashboard(HttpSession session, Model model) {
         Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
         if (bibliothecaire == null) {
-            return "redirect:/login";
+            return "redirect:/bibliothecaire/login";
         }
-        model.addAttribute("adherent", adherent);
         return "pret";
     }
 }
