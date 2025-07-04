@@ -8,6 +8,7 @@ import com.example.bibliotheque.repositories.BibliothecaireRepository;
 
 @Service
 public class BibliothecaireService {
+
     @Autowired
     private BibliothecaireRepository bibliothecaireRepository;
 
