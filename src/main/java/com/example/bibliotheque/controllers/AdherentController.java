@@ -63,16 +63,6 @@ public class AdherentController {
         return "redirect:/dashboard";
     }
 
-    // Page d’accueil après connexion
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-        Adherent adherent = (Adherent) session.getAttribute("adherent");
-        if (adherent == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("adherent", adherent);
-        return "dashboard"; // fichier Thymeleaf dashboard.html
-    }
 
     // Déconnexion
     @GetMapping("/logout")
