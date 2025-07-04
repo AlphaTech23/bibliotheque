@@ -34,7 +34,7 @@ public class PretController {
     }
     // Page d’accueil après connexion
     @GetMapping
-    public String dashboard(HttpSession session, Model model) {
+    public String formPret(HttpSession session, Model model) {
         Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
         if (bibliothecaire == null) {
             return "redirect:/bibliothecaire/login";
