@@ -29,6 +29,8 @@ public class PretService {
     private PenaliteRepository penRepo;
     @Autowired
     private TypePretRepository typePretRepo;
+    @Autowired
+    private ProlongementRepository prolRepo;
 
     @Transactional
     public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId, LocalDate datePret) throws Exception {
@@ -53,7 +55,7 @@ public class PretService {
         Exemplaire exemplaire = oe.get();
         TypePret typePret = otp.get();
 
-        if(adherent.getAge() < exemplaire.getLivre().getRestriction()) {
+        if(adherent.getAge(datePret) < exemplaire.getLivre().getRestriction()) {
             throw new Exception("La restriction d'age pour ce livre est " + exemplaire.getLivre().getRestriction());
         }
 
@@ -78,7 +80,7 @@ public class PretService {
             }
         }
 
-        if (pretRepo.existsPretActifSurExemplairePourDate(exemplaireId, datePret)) {
+        if (pretRepo.existsPretActifSurExemplaire(exemplaireId)) {
             throw new Exception("Exemplaire déjà prêté.");
         }
 
@@ -121,7 +123,10 @@ public class PretService {
         TypeAdherent typeAdherent = adherent.getTypeAdherent();
 
         LocalDate dateLimite = pret.getDatePret().plusDays(typeAdherent.getDureePret());
-
+        Optional<Prolongement> prolongement = prolRepo.findByPret_Id(pret.getId());
+        if (prolongement.isPresent()) {
+            dateLimite = dateLimite.plusDays(typeAdherent.getDureeProlongement());
+        }
         if (dateRetour.isAfter(dateLimite)) {
             Penalite penalite = new Penalite();
             penalite.setAdherent(adherent);

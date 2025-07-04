@@ -19,8 +19,7 @@ public interface PretRepository extends JpaRepository<Pret, Integer> {
        @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Pret p " +
               "WHERE p.exemplaire.id = :exId " +
               "AND p.datePret <= :d " +
-              "AND (p.dateRetour IS NULL OR p.dateRetour >= :d)")
-       boolean existsPretActifSurExemplairePourDate(@Param("exId") Integer exemplaireId,
-                                                 @Param("d") LocalDate datePret);
+              "AND p.dateRetour IS NULL")
+       boolean existsPretActifSurExemplaire(@Param("exId") Integer exemplaireId);
        Optional<Pret> findByExemplaireIdAndDateRetourIsNull(Integer exemplaireId);
 }

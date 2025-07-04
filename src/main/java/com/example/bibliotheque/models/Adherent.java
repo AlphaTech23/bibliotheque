@@ -68,8 +68,8 @@ public class Adherent {
         return motDePasse;
     }
 
-    public Integer getAge() {
-        return Period.between(this.dateNaissance, LocalDate.now()).getYears();
+    public Integer getAge(LocalDate date) {
+        return Period.between(this.dateNaissance, date).getYears();
     }
 
     public void setMotDePasse(String motDePasse) {

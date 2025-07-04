@@ -32,6 +32,9 @@ public class Reservation {
     @Column(name = "date_reservation", nullable = false)
     private LocalDate dateReservation;
 
+    @Column(name = "valide")
+    private LocalDate valide;
+
     // Getters et Setters
 
     public Integer getId() {
@@ -40,6 +43,14 @@ public class Reservation {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public LocalDate getValide() {
+        return valide;
+    }
+
+    public void setValide(LocalDate valide) {
+        this.valide = valide;
     }
 
     public Adherent getAdherent() {
