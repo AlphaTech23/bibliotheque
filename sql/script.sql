@@ -112,8 +112,9 @@ CREATE TABLE reservation (
 -- Table penalite
 CREATE TABLE penalite (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    pret_id INT NOT NULL,
-    FOREIGN KEY (pret_id) REFERENCES pret(id) ON DELETE CASCADE
+    adherent_id INT NOT NULL,
+    date_debut DATE,
+    FOREIGN KEY (adherent_id) REFERENCES adherent(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table jour_ferier
