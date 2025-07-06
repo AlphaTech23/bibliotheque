@@ -1,11 +1,7 @@
 package com.example.bibliotheque.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "livre")
@@ -13,16 +9,18 @@ public class Livre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "nom", nullable = false, length = 200)
+    @Column(nullable = false)
     private String nom;
 
-    @Column(name = "restriction", nullable = false)
+    @Column(nullable = false)
     private Integer restriction;
 
-    // Getters / Setters
+    @OneToMany(mappedBy = "livre")
+    private List<Exemplaire> exemplaires;
+
+    // Getters & Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -31,4 +29,7 @@ public class Livre {
 
     public Integer getRestriction() { return restriction; }
     public void setRestriction(Integer restriction) { this.restriction = restriction; }
+
+    public List<Exemplaire> getExemplaires() { return exemplaires; }
+    public void setExemplaires(List<Exemplaire> exemplaires) { this.exemplaires = exemplaires; }
 }

@@ -19,7 +19,7 @@ CREATE TABLE type_adherent (
     duree_prolongement INT NOT NULL,
     duree_penalite INT NOT NULL,
     quota_reservation INT NOT NULL,
-    post_prolongement INT NOT NULL
+    post_prolongement INT DEFAULT 2
 ) ENGINE=InnoDB;
 
 -- Table adherent
