@@ -2,6 +2,7 @@ package com.example.bibliotheque.services;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,42 @@ public class ReservationService {
     @Autowired
     private PenaliteService penaliteService;
 
+    public List<Reservation> findAll() {
+        return reservationRepository.findAllByOrderByDateReservationDesc();
+    }
+
+    public void validerReservation(Integer id, boolean valid) throws Exception {
+        Optional<Reservation> opt = reservationRepository.findById(id);
+        if (opt.isEmpty())
+            throw new Exception("Réservation introuvable");
+
+        Reservation r = opt.get();
+        r.setValide(valid);
+        reservationRepository.save(r);
+    }
+
+    public List<Reservation> search(String nom, String livre, LocalDate dateDebut, LocalDate dateFin, String statutStr) {
+        Boolean valide = null;
+
+        if ("valide".equalsIgnoreCase(statutStr)) {
+            valide = true;
+        } else if ("refusee".equalsIgnoreCase(statutStr)) {
+            valide = false;
+        } else if ("encours".equalsIgnoreCase(statutStr)) {
+            valide = null;
+        }
+
+        return reservationRepository.search(
+                (nom == null || nom.isBlank()) ? null : nom,
+                livre,
+                dateDebut,
+                dateFin,
+                statutStr == null ? null : valide);
+    }
+
     @Transactional
-    public String effectuerReservation(Integer adherentId, Integer exemplaireId, LocalDate dateReservation, boolean valid) throws Exception {
+    public String effectuerReservation(Integer adherentId, Integer exemplaireId, LocalDate dateReservation,
+            boolean valid) throws Exception {
 
         Adherent adherent = adherentService.getAdherent(adherentId);
         Exemplaire exemplaire = exemplaireService.getExemplaire(exemplaireId);

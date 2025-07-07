@@ -1,8 +1,11 @@
 package com.example.bibliotheque.controllers;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.example.bibliotheque.models.*;
+import com.example.bibliotheque.services.AdherentService;
+import com.example.bibliotheque.services.TypePretService;
 import com.example.bibliotheque.services.PretService;
 
 import org.springframework.stereotype.Controller;
@@ -20,6 +23,12 @@ public class PretController {
 
     @Autowired
     private PretService pretService;
+
+    @Autowired
+    private AdherentService adherentService;
+
+    @Autowired
+    private TypePretService typePretService;
 
     @PostMapping("/effectuer")
     public String effectuerPret(@RequestParam Integer adherentId,
@@ -43,6 +52,35 @@ public class PretController {
             return "redirect:/bibliothecaire/login";
         }
         return "pret";
+    }
+
+    @GetMapping("/historique")
+    public String rechercher(
+            @RequestParam(required = false) Integer adherentId,
+            @RequestParam(required = false) Integer typePretId,
+            @RequestParam(required = false) String dateDebut,
+            @RequestParam(required = false) String dateFin,
+            @RequestParam(required = false) String nom,
+            Model model, HttpSession session) {
+
+        LocalDate d1 = (dateDebut == null || dateDebut.isBlank()) ? null : LocalDate.parse(dateDebut);
+        LocalDate d2 = (dateFin == null || dateFin.isBlank()) ? null : LocalDate.parse(dateFin);
+
+        Adherent adherent = (Adherent) session.getAttribute("adherent");
+        Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
+        if (adherent != null) {
+            adherentId = adherent.getId();
+        } else if (bibliothecaire == null) {
+            return "redirect:/bibliothecaire/login";
+        }
+
+        List<Pret> prets = pretService.recherche(adherentId, typePretId, d1, d2, nom);
+
+        model.addAttribute("adherents", adherentService.findAll());
+        model.addAttribute("typesPret", typePretService.findAll());
+        model.addAttribute("prets", prets);
+
+        return "historique";
     }
 
     @GetMapping("/retour")

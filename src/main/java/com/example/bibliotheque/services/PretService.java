@@ -2,13 +2,26 @@ package com.example.bibliotheque.services;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.bibliotheque.models.*;
-import com.example.bibliotheque.repositories.*;
+import com.example.bibliotheque.models.Adherent;
+import com.example.bibliotheque.models.Exemplaire;
+import com.example.bibliotheque.models.Pret;
+import com.example.bibliotheque.models.Prolongement;
+import com.example.bibliotheque.models.TypeAdherent;
+import com.example.bibliotheque.models.TypePret;
+import com.example.bibliotheque.repositories.AdherentRepository;
+import com.example.bibliotheque.repositories.ExemplaireRepository;
+import com.example.bibliotheque.repositories.PenaliteRepository;
+import com.example.bibliotheque.repositories.PretRepository;
+import com.example.bibliotheque.repositories.ProlongementRepository;
+import com.example.bibliotheque.repositories.ReservationRepository;
+import com.example.bibliotheque.repositories.StatutExemplaireRepository;
+import com.example.bibliotheque.repositories.TypePretRepository;
 
 @Service
 public class PretService {
@@ -26,16 +39,10 @@ public class PretService {
     private ExemplaireRepository exemplaireRepository;
 
     @Autowired
-    private StatutExemplaireRepository statutExemplaireRepository;
-
-    @Autowired
     private PretRepository pretRepository;
 
     @Autowired
     private ReservationRepository reservationRepository;
-
-    @Autowired
-    private PenaliteRepository penaliteRepository;
 
     @Autowired
     private TypePretRepository typePretRepository;
@@ -47,10 +54,14 @@ public class PretService {
     private PenaliteService penaliteService;
 
     @Transactional
-    public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId, LocalDate datePret) throws Exception {
-        Adherent adherent = adherentRepository.findById(adherentId).orElseThrow(() -> new Exception("Adherent introuvable."));
-        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).orElseThrow(() -> new Exception("Exemplaire introuvable."));
-        TypePret typePret = typePretRepository.findById(typePretId).orElseThrow(() -> new Exception("Type prêt introuvable."));
+    public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId, LocalDate datePret)
+            throws Exception {
+        Adherent adherent = adherentRepository.findById(adherentId)
+                .orElseThrow(() -> new Exception("Adherent introuvable."));
+        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId)
+                .orElseThrow(() -> new Exception("Exemplaire introuvable."));
+        TypePret typePret = typePretRepository.findById(typePretId)
+                .orElseThrow(() -> new Exception("Type prêt introuvable."));
 
         // Restrictions d'age
         adherentService.verifierRestrictionAge(adherent, exemplaire, datePret);
@@ -61,7 +72,8 @@ public class PretService {
 
         // Quota prêt
         if (!"sur place".equalsIgnoreCase(typePret.getLibelle())) {
-            long countPret = pretRepository.countByAdherentIdAndDateRetourIsNullAndTypePret_LibelleNot(adherentId, "sur place");
+            long countPret = pretRepository.countByAdherentIdAndDateRetourIsNullAndTypePret_LibelleNot(adherentId,
+                    "sur place");
             if (countPret >= adherent.getTypeAdherent().getQuotaExemplaire()) {
                 throw new Exception("Quota de prêt dépassé.");
             }
@@ -88,6 +100,27 @@ public class PretService {
         pretRepository.save(pret);
 
         return "Prêt effectué avec succès.";
+    }
+
+    public List<Pret> recherche(Integer adherentId, Integer typePretId, LocalDate dateDebut, LocalDate dateFin, String nom) {
+        List<Pret> prets = pretRepository.searchPretMulticritere(adherentId, typePretId, dateDebut, dateFin, nom);
+
+        for (Pret pret : prets) {
+            // État
+            pret.setEtat(pret.getDateRetour() == null ? "En cours" : "Retourné");
+
+            // Prolongé
+            boolean prolonge = pret.getProlongements() != null && !pret.getProlongements().isEmpty();
+            pret.setProlonge(prolonge);
+
+            // Date retour prévue
+            int duree = pret.getAdherent().getTypeAdherent().getDureePret();
+            if (prolonge) {
+                duree += pret.getAdherent().getTypeAdherent().getDureeProlongement();
+            }
+            pret.setDateRetourPrevue(pret.getDatePret().plusDays(duree));    
+        }
+        return prets;
     }
 
     @Transactional

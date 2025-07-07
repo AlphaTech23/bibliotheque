@@ -19,13 +19,9 @@ public class AbonnementController {
     @Autowired
     private AbonnementService abonnementService;
 
-    @Autowired
-    private AdherentRepository adherentRepo;
-
-    // Page pour l'abonnement initial
     @GetMapping
     public String showForm() {
-        return "abonnement";  // JSP de création adhérent + abonnement
+        return "abonnement"; 
     }
 
     @PostMapping
@@ -43,8 +39,6 @@ public class AbonnementController {
             adherent.setNom(nom);
             adherent.setEmail(email);
             adherent.setMotDePasse(motDePasse);
-            // Important: récupérer et setTypeAdherent depuis typeId
-            // Ici on suppose que tu as un AdherentService pour récupérer le type
             TypeAdherent typeAdherent = new TypeAdherent();
             typeAdherent.setId(typeId);
             adherent.setTypeAdherent(typeAdherent);
@@ -64,7 +58,6 @@ public class AbonnementController {
     // Page pour le réabonnement
     @GetMapping("/renew")
     public String showRenewForm(Model model) {
-        model.addAttribute("adherents", adherentRepo.findAll());
         return "reabonnement";
     }
 
