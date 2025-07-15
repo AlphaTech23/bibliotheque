@@ -46,6 +46,12 @@
                                     <i class="bi bi-clock-history me-2"></i>Prêts
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= currentPath.equals("/penalites") ? "active" : "" %>" 
+                                   href="${pageContext.request.contextPath}/penalites">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Penalités
+                                </a>
+                            </li>
                         <% } %>
 
                         <!-- Menu adhérent -->
@@ -60,6 +66,12 @@
                                 <a class="nav-link <%= currentPath.equals("/reservation/historique") ? "active" : "" %>" 
                                    href="${pageContext.request.contextPath}/reservation/historique">
                                     <i class="bi bi-bookmark me-2"></i>Mes réservations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= currentPath.equals("/penalites") ? "active" : "" %>" 
+                                   href="${pageContext.request.contextPath}/penalites">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Mes penalités
                                 </a>
                             </li>
                         <% } %>

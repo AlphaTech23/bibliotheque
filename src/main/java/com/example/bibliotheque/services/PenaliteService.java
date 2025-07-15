@@ -1,7 +1,7 @@
 package com.example.bibliotheque.services;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,4 +45,11 @@ public class PenaliteService {
 
         penaliteRepository.save(penalite);
     }
+
+        public List<Penalite> getAll(Integer adherentId) {
+            if(adherentId != null)
+                return penaliteRepository.findAll();
+            return penaliteRepository.findByAdherentId(adherentId);
+        }
+    
 }
