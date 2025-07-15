@@ -38,7 +38,7 @@ public class AdherentController {
         return adherentService.login(email, motDePasse)
                 .map(adherent -> {
                     session.setAttribute("adherent", adherent); // Stocker en session
-                    return "redirect:/prets/retour";
+                    return "redirect:/reservation";
                 })
                 .orElseGet(() -> {
                     model.addAttribute("error", "Email ou mot de passe incorrect");

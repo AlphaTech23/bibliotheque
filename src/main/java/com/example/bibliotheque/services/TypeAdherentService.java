@@ -21,4 +21,12 @@ public class TypeAdherentService {
     public TypeAdherent findById(Integer id) throws Exception {
         return typeAdherentRepository.findById(id).orElseThrow(() -> new Exception("TypeAdherent introuvable."));
     }
+
+    public TypeAdherent save(TypeAdherent typeAdherent) {
+        return typeAdherentRepository.save(typeAdherent);
+    }
+
+    public void delete(Integer id) {
+        typeAdherentRepository.deleteById(id);
+    }
 }

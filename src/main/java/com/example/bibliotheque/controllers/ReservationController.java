@@ -1,5 +1,6 @@
 package com.example.bibliotheque.controllers;
 
+import com.example.bibliotheque.services.ExemplaireService;
 import com.example.bibliotheque.services.ReservationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,18 @@ public class ReservationController {
 
     @Autowired
     private ReservationService reservationService;
+    
+    @Autowired
+    private ExemplaireService exemplaireService;
 
     @GetMapping
-    public String afficherFormulaire(HttpSession session) {
+    public String afficherFormulaire(HttpSession session, Model model) {
         Adherent adherent = (Adherent) session.getAttribute("adherent");
         Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
         if (adherent == null && bibliothecaire == null) {
             return "redirect:/login";
         }
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "reserver";
     }
 
@@ -96,6 +101,7 @@ public class ReservationController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "reserver";
     }
 }

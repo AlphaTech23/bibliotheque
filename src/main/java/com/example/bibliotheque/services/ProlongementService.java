@@ -1,7 +1,6 @@
 package com.example.bibliotheque.services;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,9 @@ public class ProlongementService {
 
     @Autowired
     private ReservationRepository reservationRepository;
-
+    
     @Autowired
-    private PenaliteRepository penaliteRepository;
+    private JourService jourService;
 
     @Autowired
     private PenaliteService penaliteService;
@@ -43,7 +42,7 @@ public class ProlongementService {
         Adherent adherent = pret.getAdherent();
         TypeAdherent typeAdherent = adherent.getTypeAdherent();
 
-        LocalDate dateRetourInitial = pret.getDatePret().plusDays(typeAdherent.getDureePret());
+        LocalDate dateRetourInitial = jourService.ajusterDate(pret.getDatePret().plusDays(typeAdherent.getDureePret()));
 
         // Vérifier réservation existante sur la date de prolongement
         if (reservationRepository.existsByExemplaireIdAndDateReservation(pret.getExemplaire().getId(), dateProlongement)) {

@@ -1,55 +1,75 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Effectuer un prêt</title>
-    <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<%@ include file="header.jsp" %>
+    <title>Nouveau prêt</title>
 </head>
-<body class="container mt-5">
+<body>
+    <%@ include file="navbar.jsp" %>
+    <%@ include file="sidebar.jsp" %>
 
-    <h2 class="mb-4">Effectuer un prêt</h2>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2><i class="bi bi-journal-arrow-down me-2"></i>Nouveau prêt</h2>
+            </div>
 
-    <!-- Message d'erreur -->
-    <% if(request.getAttribute("error") != null) { %>
-        <div class="alert alert-danger">
-            <%= request.getAttribute("error") %>
-        </div>
-    <% } %>
+            <div class="card card-form">
+                <div class="card-body">
+                    <%-- Messages d'erreur/succès --%>
+                    <%@ include file="alerts.jsp" %>
 
-    <!-- Message de succès -->
-    <% if(request.getAttribute("success") != null) { %>
-        <div class="alert alert-success">
-            <%= request.getAttribute("success") %>
-        </div>
-    <% } %>
+                    <form method="post" action="<%= request.getContextPath() %>/prets/effectuer">
+                        <div class="row g-3">
+                            <div class="mb-3">
+                                <label for="DatePret" class="form-label">Date de prêt</label>
+                                <input type="date" name="datePret" id="DatePret" class="form-control" required>
+                            </div><!-- Remplacer les 3 inputs par des selects -->
+                            <div class="mb-3">
+                                <label class="form-label">Adhérent</label>
+                                <select name="adherentId" class="form-select" required>
+                                    <option value="">-- Sélectionnez un adhérent --</option>
+                                    <% 
+                                    List<Adherent> adherents = (List<Adherent>) request.getAttribute("adherents");
+                                    for (Adherent a : adherents) { 
+                                    %>
+                                        <option value="<%= a.getId() %>"><%= a.getNom() %></option>
+                                    <% } %>
+                                </select>
+                            </div>
 
-    <form method="post" action="<%= request.getContextPath() %>/prets/effectuer" class="border p-4 rounded bg-light shadow-sm">
+                            <div class="mb-3">
+                                <label class="form-label">Exemplaire</label>
+                                <select name="exemplaireId" class="form-select" required>
+                                    <option value="">-- Sélectionnez un exemplaire --</option>
+                                    <% 
+                                    List<Exemplaire> exemplaires = (List<Exemplaire>) request.getAttribute("exemplaires");
+                                    for (Exemplaire exemplaire : exemplaires) { 
+                                    %>
+                                        <option value="<%= exemplaire.getId() %>">
+                                            <%= exemplaire.getLivre().getNom() %> (Ex. <%= exemplaire.getId() %>)
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
 
-        <div class="mb-3">
-            <label for="adherentId" class="form-label">Adhérent :</label>
-            <input type="number" name="adherentId" id="adherentId" class="form-control" required/>
-        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Type de prêt</label>
+                                <select name="typePretId" class="form-select" required>
+                                    <option value="">-- Sélectionnez un type --</option>
+                                    <% 
+                                    List<TypePret> typesPret = (List<TypePret>) request.getAttribute("typesPret");
+                                    for (TypePret type : typesPret) { 
+                                    %>
+                                        <option value="<%= type.getId() %>"><%= type.getLibelle() %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
 
-        <div class="mb-3">
-            <label for="adherentId" class="form-label">Date de pret :</label>
-            <input type="date" name="datePret" id="DatePret" class="form-control" required/>
-        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Enregistrer le prêt
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-        <div class="mb-3">
-            <label for="exemplaireId" class="form-label">Exemplaire :</label>
-            <input type="number" name="exemplaireId" id="exemplaireId" class="form-control" required/>
-        </div>
-
-        <div class="mb-3">
-            <label for="typePretId" class="form-label">Type de prêt :</label>
-            <input type="number" name="typePretId" id="typePretId" class="form-control" required/>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Effectuer le prêt</button>
-    </form>
-
-    <!-- Bootstrap JS (facultatif, pour composants interactifs) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+    <%@ include file="footer.jsp" %>

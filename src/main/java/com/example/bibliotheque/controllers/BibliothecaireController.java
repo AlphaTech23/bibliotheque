@@ -38,10 +38,4 @@ public class BibliothecaireController {
             return "login-biblio";
         }
     }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
 }

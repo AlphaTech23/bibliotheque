@@ -1,40 +1,54 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<head>
-    <title>Prolonger un prêt</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<%@ include file="header.jsp" %>
+    <title>Prolongation</title>
 </head>
-<body class="container mt-5">
+<body>
+    <%@ include file="navbar.jsp" %>
+    <%@ include file="sidebar.jsp" %>
 
-    <h2 class="mb-4">Prolonger un prêt</h2>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2><i class="bi bi-calendar2-plus me-2"></i>Prolongation de prêt</h2>
+            </div>
 
-    
-    <!-- Message d'erreur -->
-    <% if(request.getAttribute("error") != null) { %>
-        <div class="alert alert-danger">
-            <%= request.getAttribute("error") %>
-        </div>
-    <% } %>
+            <div class="card card-form">
+                <div class="card-body">
+                    <%-- Messages d'erreur/succès --%>
+                    <%@ include file="alerts.jsp" %>
 
-    <!-- Message de succès -->
-    <% if(request.getAttribute("success") != null) { %>
-        <div class="alert alert-success">
-            <%= request.getAttribute("success") %>
-        </div>
-    <% } %>
+                    <form method="post" action="<%= request.getContextPath() %>/prolongement/effectuer">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="pretId" class="form-label">Prêt</label>
+                                <select name="pretId" class="form-select" id="pretId" required>
+                                    <option value="">-- Sélectionnez un prêt --</option>
+                                    <% 
+                                    List<Pret> prets = (List<Pret>) request.getAttribute("prets");
+                                    if (prets != null) {
+                                        for (Pret pret : prets) { 
+                                    %>
+                                        <option value="<%= pret.getId() %>">
+                                            Prêt #<%= pret.getId() %> - <%= pret.getExemplaire().getLivre().getNom() %> 
+                                            (Retour prévu: <%= pret.getDateRetourPrevue() %>)
+                                        </option>
+                                    <% 
+                                        } 
+                                    }
+                                    %>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dateProlongement" class="form-label">Date prolongation</label>
+                                <input type="date" name="dateProlongement" class="form-control" id="dateProlongement" required>
+                            </div>
+                        </div>
 
-    <form method="post" action="<%= request.getContextPath() %>/prolongement/effectuer" class="border p-4 rounded shadow">
-        <div class="mb-3">
-            <label for="pretId" class="form-label">ID du prêt :</label>
-            <input type="number" name="pretId" class="form-control" required/>
-        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Valider la prolongation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-        <div class="mb-3">
-            <label for="dateProlongement" class="form-label">Date du prolongement :</label>
-            <input type="date" name="dateProlongement" class="form-control" required/>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Prolonger le prêt</button>
-    </form>
-
-</body>
-</html>
+    <%@ include file="footer.jsp" %>

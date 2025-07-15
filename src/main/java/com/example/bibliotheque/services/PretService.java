@@ -8,20 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.bibliotheque.models.Adherent;
-import com.example.bibliotheque.models.Exemplaire;
-import com.example.bibliotheque.models.Pret;
-import com.example.bibliotheque.models.Prolongement;
-import com.example.bibliotheque.models.TypeAdherent;
-import com.example.bibliotheque.models.TypePret;
-import com.example.bibliotheque.repositories.AdherentRepository;
-import com.example.bibliotheque.repositories.ExemplaireRepository;
-import com.example.bibliotheque.repositories.PenaliteRepository;
-import com.example.bibliotheque.repositories.PretRepository;
-import com.example.bibliotheque.repositories.ProlongementRepository;
-import com.example.bibliotheque.repositories.ReservationRepository;
-import com.example.bibliotheque.repositories.StatutExemplaireRepository;
-import com.example.bibliotheque.repositories.TypePretRepository;
+import com.example.bibliotheque.models.*;
+import com.example.bibliotheque.repositories.*;
 
 @Service
 public class PretService {
@@ -52,6 +40,9 @@ public class PretService {
 
     @Autowired
     private PenaliteService penaliteService;
+    
+    @Autowired
+    private JourService jourService;
 
     @Transactional
     public String effectuerPret(Integer adherentId, Integer exemplaireId, Integer typePretId, LocalDate datePret)
@@ -131,7 +122,7 @@ public class PretService {
         Adherent adherent = pret.getAdherent();
         TypeAdherent typeAdherent = adherent.getTypeAdherent();
 
-        LocalDate dateLimite = pret.getDatePret().plusDays(typeAdherent.getDureePret());
+        LocalDate dateLimite = jourService.ajusterDate(pret.getDatePret().plusDays(typeAdherent.getDureePret()));
         Optional<Prolongement> prolongementOpt = prolongementRepository.findByPret_Id(pret.getId());
         if (prolongementOpt.isPresent()) {
             dateLimite = dateLimite.plusDays(typeAdherent.getDureeProlongement());
@@ -148,5 +139,9 @@ public class PretService {
         pretRepository.save(pret);
 
         return "Retour enregistré avec succès.";
+    }
+
+    public List<Pret> findAll() {
+        return pretRepository.findAll();
     }
 }

@@ -68,8 +68,8 @@ public class AbonnementService {
         return "Réabonnement effectué jusqu'au " + nouvelleDateFin;
     }
 
-    public boolean estActif(Integer adherentId) {
-        return abonnementRepo.findActifByAdherentId(adherentId, LocalDate.now()).isPresent();
+    public boolean estActif(Integer adherentId, LocalDate date) {
+        return abonnementRepo.findActifByAdherentId(adherentId, date).isPresent();
     }
 
     public Optional<Abonnement> getDernierAbonnement(Integer adherentId) {

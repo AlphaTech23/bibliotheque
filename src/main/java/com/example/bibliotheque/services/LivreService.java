@@ -24,9 +24,22 @@ public class LivreService {
     @Autowired
     private ProlongementRepository prolongementRepo;
 
-    /**
-     * Recherche multicritère sur les livres
-     */
+     public List<Livre> findAll() {
+        return livreRepo.findAll();
+    }
+
+    public Optional<Livre> findById(Integer id) {
+        return livreRepo.findById(id);
+    }
+
+    public Livre save(Livre livre) {
+        return livreRepo.save(livre);
+    }
+
+    public void delete(Integer id) {
+        livreRepo.deleteById(id);
+    }
+    
     public List<Livre> searchLivres(String nom, Integer minRestriction, Integer maxRestriction) {
 
         boolean hasNom = nom != null && !nom.isBlank();
