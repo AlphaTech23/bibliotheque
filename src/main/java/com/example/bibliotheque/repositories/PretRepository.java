@@ -34,9 +34,7 @@ public interface PretRepository extends JpaRepository<Pret, Integer> {
                      "AND (:typePretId IS NULL OR p.typePret.id = :typePretId) " +
                      "AND (:dateDebut IS NULL OR p.datePret >= :dateDebut) " +
                      "AND (:dateFin IS NULL OR p.datePret <= :dateFin) " +
-                     "AND (:nom IS NULL OR LOWER(p.adherent.nom) LIKE LOWER(CONCAT('%', :nom, '%')) " +
-                     "     OR LOWER(p.adherent.email) LIKE LOWER(CONCAT('%', :nom, '%')) " +
-                     "     OR LOWER(p.exemplaire.livre.nom) LIKE LOWER(CONCAT('%', :nom, '%')))")
+                     "AND (:nom IS NULL OR LOWER(p.exemplaire.livre.nom) LIKE LOWER(CONCAT('%', :nom, '%')))")
        List<Pret> searchPretMulticritere(
                      @Param("adherentId") Integer adherentId,
                      @Param("typePretId") Integer typePretId,

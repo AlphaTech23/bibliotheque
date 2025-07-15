@@ -1,5 +1,6 @@
 package com.example.bibliotheque.controllers;
 
+import com.example.bibliotheque.services.PretService;
 import com.example.bibliotheque.services.ProlongementService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,16 @@ public class ProlongementController {
     @Autowired
     private ProlongementService prolongementService;
 
+    @Autowired
+    private PretService pretService;
+
     @GetMapping
-    public String afficherFormulaire(HttpSession session) {
+    public String afficherFormulaire(HttpSession session, Model model) {
         Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
         if (bibliothecaire == null) {
             return "redirect:/bibliothecaire/login";
         }
+        model.addAttribute("prets", pretService.findAll());
         return "prolongement";
     }
 
@@ -41,6 +46,7 @@ public class ProlongementController {
             model.addAttribute("error", e.getMessage());
         }
 
+        model.addAttribute("prets", pretService.findAll());
         return "prolongement";
     }
 }

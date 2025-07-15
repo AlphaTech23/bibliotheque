@@ -1,9 +1,7 @@
 package com.example.bibliotheque.controllers;
 
-import com.example.bibliotheque.models.Adherent;
-import com.example.bibliotheque.models.TypeAdherent;
-import com.example.bibliotheque.services.AbonnementService;
-import com.example.bibliotheque.repositories.AdherentRepository;
+import com.example.bibliotheque.models.*;
+import com.example.bibliotheque.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +17,15 @@ public class AbonnementController {
     @Autowired
     private AbonnementService abonnementService;
 
+    @Autowired
+    private TypeAdherentService typeAdherentService;
+    
+    @Autowired
+    private AdherentService adherentService;
+
     @GetMapping
-    public String showForm() {
+    public String showForm(Model model) {
+        model.addAttribute("typesAdherent", typeAdherentService.findAll());
         return "abonnement"; 
     }
 
@@ -58,6 +63,7 @@ public class AbonnementController {
     // Page pour le réabonnement
     @GetMapping("/renew")
     public String showRenewForm(Model model) {
+        model.addAttribute("adherents", adherentService.findAll());
         return "reabonnement";
     }
 

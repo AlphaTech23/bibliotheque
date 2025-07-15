@@ -16,7 +16,5 @@ public interface LivreRepository extends JpaRepository<Livre, Integer> {
     List<Livre> findByNomContainingIgnoreCaseAndRestrictionBetween(String nom, Integer minRestriction, Integer maxRestriction);
 
     List<Livre> findByRestrictionBetween(Integer minRestriction, Integer maxRestriction);
-
-    List<Livre> findAll(); // déjà existante via JpaRepository
 }
 

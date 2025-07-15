@@ -1,108 +1,121 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<html>
-<head>
-    <title>Recherche de Livres</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body class="container mt-4">
-    <h2>Recherche de livres</h2>
-
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <input type="text" name="nom" placeholder="Nom du livre" class="form-control"
-                   value="<%= request.getAttribute("nom") != null ? request.getAttribute("nom") : "" %>" />
-        </div>
-        <div class="col-md-3">
-            <input type="number" name="minRestriction" placeholder="Restriction min" class="form-control"
-                   value="<%= request.getAttribute("minRestriction") != null ? request.getAttribute("minRestriction") : "" %>" />
-        </div>
-        <div class="col-md-3">
-            <input type="number" name="maxRestriction" placeholder="Restriction max" class="form-control"
-                   value="<%= request.getAttribute("maxRestriction") != null ? request.getAttribute("maxRestriction") : "" %>" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Rechercher</button>
-        </div>
-    </form>
-
 <%
-    java.util.List<com.example.bibliotheque.models.Livre> livres =
-        (java.util.List<com.example.bibliotheque.models.Livre>) request.getAttribute("livres");
-    java.util.Map<Integer, java.util.Map<String, Object>> statsMap =
-        (java.util.Map<Integer, java.util.Map<String, Object>>) request.getAttribute("statsMap");
+    List<Livre> livres = (List<Livre>) request.getAttribute("livres");
+    Map<Integer, Map<String, Object>> statsMap = (Map<Integer, Map<String, Object>>) request.getAttribute("statsMap");
+    
+    String nom = request.getParameter("nom");
+    String minRestriction = request.getParameter("minRestriction");
+    String maxRestriction = request.getParameter("maxRestriction");
 %>
+<%@ include file="header.jsp" %>
+    <title>Recherche de Livres</title>
+</head>
+<body>
+    <%@ include file="navbar.jsp" %>
+    <%@ include file="sidebar.jsp" %>
 
-<% if (livres != null && !livres.isEmpty()) { %>
-    <%
-        boolean hasDetails = false;
-    %>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Restriction</th>
-                <th>Total</th>
-                <th>Disponibles</th>
-                <th>Indisponibles</th>
-                <th>Détails</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% for (com.example.bibliotheque.models.Livre livre : livres) {
-                java.util.Map<String, Object> stats = statsMap.get(livre.getId());
-                if (stats == null) stats = new java.util.HashMap<>();
-                Integer total = (Integer) stats.get("total");
-                Integer disponible = (Integer) stats.get("disponible");
-                Integer indisponible = (Integer) stats.get("indisponible");
-                java.util.List<?> pretInfos = (java.util.List<?>) stats.get("pretInfos");
-            %>
-            <tr>
-                <td><%= livre.getNom() %></td>
-                <td><%= livre.getRestriction() %></td>
-                <td><%= total != null ? total : 0 %></td>
-                <td><%= disponible != null ? disponible : 0 %></td>
-                <td><%= indisponible != null ? indisponible : 0 %></td>
-                <td>
-                    <% if (pretInfos != null && !pretInfos.isEmpty()) { %>
-                        <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#detail-<%= livre.getId() %>">
-                            Voir
-                        </button>
-                        <%
-                            hasDetails = true;
-                        %>
-                    <% } %>
-                </td>
-            </tr>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2><i class="bi bi-search me-2"></i>Recherche de livres</h2>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="${pageContext.request.contextPath}/reservation" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Nouvelle réservation
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-            <% if (pretInfos != null && !pretInfos.isEmpty()) { %>
-            <tr class="collapse" id="detail-<%= livre.getId() %>">
-                <td colspan="6">
-                    <strong>Exemplaires prêtés :</strong>
-                    <ul>
-                        <% for (Object infoObj : pretInfos) {
-                            // On suppose que infoObj est un Map<String,Object>
-                            java.util.Map<String, Object> info = (java.util.Map<String, Object>) infoObj;
-                            com.example.bibliotheque.models.Adherent adherent = (com.example.bibliotheque.models.Adherent) info.get("adherent");
-                            java.time.LocalDate dateDispo = (java.time.LocalDate) info.get("dateDispo");
-                        %>
-                            <li><%= adherent.getNom() %> (<%= adherent.getEmail() %>) – Disponible le : <%= dateDispo != null ? dateDispo.toString() : "N/A" %></li>
-                        <% } %>
-                    </ul>
-                </td>
-            </tr>
+            <!-- Formulaire de recherche -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" name="nom" placeholder="Nom du livre" class="form-control" 
+                                   value="<%= nom != null ? nom : "" %>" />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="minRestriction" placeholder="Restriction min" class="form-control" 
+                                   value="<%= minRestriction != null ? minRestriction : "" %>" />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="maxRestriction" placeholder="Restriction max" class="form-control" 
+                                   value="<%= maxRestriction != null ? maxRestriction : "" %>" />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-1"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Résultats -->
+            <% if (livres != null && !livres.isEmpty()) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Restriction</th>
+                                <th>Total</th>
+                                <th>Disponibles</th>
+                                <th>Indisponibles</th>
+                                <th>Détails</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (Livre livre : livres) { 
+                                Map<String, Object> stats = statsMap.get(livre.getId());
+                                if (stats == null) stats = new HashMap<>();
+                                Integer total = (Integer) stats.get("total");
+                                Integer disponible = (Integer) stats.get("disponible");
+                                Integer indisponible = (Integer) stats.get("indisponible");
+                                List<?> pretInfos = (List<?>) stats.get("pretInfos");
+                            %>
+                                <tr>
+                                    <td><%= livre.getNom() %></td>
+                                    <td><%= livre.getRestriction() %></td>
+                                    <td><%= total != null ? total : 0 %></td>
+                                    <td><%= disponible != null ? disponible : 0 %></td>
+                                    <td><%= indisponible != null ? indisponible : 0 %></td>
+                                    <td>
+                                        <% if (pretInfos != null && !pretInfos.isEmpty()) { %>
+                                            <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" 
+                                                    data-bs-target="#detail-<%= livre.getId() %>">
+                                                <i class="bi bi-eye me-1"></i> Voir
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+
+                                <% if (pretInfos != null && !pretInfos.isEmpty()) { %>
+                                <tr class="collapse" id="detail-<%= livre.getId() %>">
+                                    <td colspan="6">
+                                        <strong>Exemplaires prêtés :</strong>
+                                        <ul class="list-group list-group-flush">
+                                            <% for (Object infoObj : pretInfos) { 
+                                                Map<String, Object> info = (Map<String, Object>) infoObj;
+                                                adherent = (Adherent) info.get("adherent");
+                                                LocalDate dateDispo = (LocalDate) info.get("dateDispo");
+                                            %>
+                                                <li class="list-group-item">
+                                                    <%= adherent.getNom() %> (<%= adherent.getEmail() %>) - 
+                                                    Disponible le : <%= dateDispo != null ? dateDispo.toString() : "N/A" %>
+                                                </li>
+                                            <% } %>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-1"></i> Aucun livre trouvé.
+                </div>
             <% } %>
-            <% } %>
-        </tbody>
-    </table>
-    <% if (!hasDetails) { %>
-        <div class="alert alert-info">Aucun détail de prêt disponible pour les livres listés.</div>
-    <% } %>
 
-<% } else { %>
-    <div class="alert alert-warning">Aucun livre trouvé.</div>
-<% } %>
-
-</body>
-</html>
+    <%@ include file="footer.jsp" %>

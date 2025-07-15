@@ -7,5 +7,6 @@ import java.util.*;
 
 public interface StatutExemplaireRepository extends JpaRepository<StatutExemplaire, Integer> {
     Optional<StatutExemplaire> findTopByExemplaireIdOrderByDateChangementDesc(Integer exemplaireId);
+    List<StatutExemplaire> findByExemplaireIdOrderByDateChangementDesc(Integer exemplaireId);
 }
     

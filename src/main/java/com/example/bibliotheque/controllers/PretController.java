@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.bibliotheque.models.*;
 import com.example.bibliotheque.services.AdherentService;
+import com.example.bibliotheque.services.ExemplaireService;
 import com.example.bibliotheque.services.TypePretService;
 import com.example.bibliotheque.services.PretService;
 
@@ -30,6 +31,9 @@ public class PretController {
     @Autowired
     private TypePretService typePretService;
 
+    @Autowired
+    private ExemplaireService exemplaireService;
+
     @PostMapping("/effectuer")
     public String effectuerPret(@RequestParam Integer adherentId,
                                 @RequestParam Integer exemplaireId,
@@ -42,6 +46,9 @@ public class PretController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
+        model.addAttribute("adherents", adherentService.findAll());
+        model.addAttribute("typesPret", typePretService.findAll());
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "pret";
     }
     // Page d’accueil après connexion
@@ -51,6 +58,9 @@ public class PretController {
         if (bibliothecaire == null) {
             return "redirect:/bibliothecaire/login";
         }
+        model.addAttribute("adherents", adherentService.findAll());
+        model.addAttribute("typesPret", typePretService.findAll());
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "pret";
     }
 
@@ -79,16 +89,22 @@ public class PretController {
         model.addAttribute("adherents", adherentService.findAll());
         model.addAttribute("typesPret", typePretService.findAll());
         model.addAttribute("prets", prets);
+        model.addAttribute("nom", nom);
+        model.addAttribute("dateDebut", dateDebut);
+        model.addAttribute("dateFin", dateFin);
+        model.addAttribute("adherentId", adherentId);
+        model.addAttribute("typePretId", typePretId);
 
         return "historique";
     }
 
     @GetMapping("/retour")
     public String formRetour(HttpSession session, Model model) {
-        Adherent adherent = (Adherent) session.getAttribute("adherent");
-        if (adherent == null) {
+        Bibliothecaire bibliothecaire = (Bibliothecaire) session.getAttribute("bibliothecaire");
+        if (bibliothecaire == null) {
             return "redirect:/login";
         }
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "pret-retour";
     }
 
@@ -106,7 +122,7 @@ public class PretController {
         catch(Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-
+        model.addAttribute("exemplaires", exemplaireService.findAll());
         return "pret-retour";
     }
 

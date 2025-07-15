@@ -124,11 +124,13 @@ CREATE TABLE penalite (
 CREATE TABLE jour_ferier (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_ferier DATE NOT NULL,
-    evenement VARCHAR(100) NOT NULL
+    evenement VARCHAR(100) NOT NULL,
+    avant BOOLEAN
 ) ENGINE=InnoDB;
 
 -- Table jour_ouvrable
 CREATE TABLE jour_ouvrable (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    jour_semaine VARCHAR(10) NOT NULL
+    jour_semaine INT NOT NULL,
+    avant BOOLEAN
 ) ENGINE=InnoDB;
